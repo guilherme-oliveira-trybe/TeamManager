@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "[DEV]": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_URLS": "http://*:5001",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_HOST": "CONFIGURE_O_HOST",
+        "DATABASE_PORT": "CONFIGURE_A_PORTA",
+        "DATABASE_NAME": "CONFIGURE_NOME_DO_BANCO",
+        "DATABASE_USER": "CONFIGURE_SEU_USUARIO",
+        "DATABASE_PASSWORD": "CONFIGURE_SUA_SENHA_AQUI"
+      }
+    }
+  }
+}

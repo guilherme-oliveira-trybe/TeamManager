@@ -1,0 +1,41 @@
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio / Rider
+.vs/
+.idea/
+*.swp
+*.swo
+*~
+*.user
+*.suo
+*.userosscache
+
+## Sensitive files - NÃO COMMITAR!
+**/Properties/launchSettings.json
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
+## Environment variables
+.env
+.env.local
+
+## .NET
+*.rsuser
+*.sln.docstates
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Docker
+docker-compose.override.yml

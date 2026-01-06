@@ -49,7 +49,6 @@ public class AuthService : IAuthService
             {
                 Token = token,
                 ExpiresAt = expiresAt,
-                User = UserService.MapToResponse(user)
             });
         }
     }
@@ -67,7 +66,6 @@ public class AuthService : IAuthService
     {
         Token = normalToken,
         ExpiresAt = normalExpiresAt,
-        User = UserService.MapToResponse(user)
     });
 }
 

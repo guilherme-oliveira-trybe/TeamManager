@@ -1,10 +1,11 @@
 using FluentValidation;
 using GFATeamManager.Api.Endpoints;
 using GFATeamManager.Api.Extensions;
+using Microsoft.EntityFrameworkCore;
 using GFATeamManager.Api.Middlewares;
+using GFATeamManager.Infrastructure.Data.Seed;
 using GFATeamManager.Application.Validators.Auth;
 using GFATeamManager.Infrastructure.Data.Context;
-using Microsoft.EntityFrameworkCore;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -31,11 +32,13 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
         context.Database.Migrate();
+        
+        await SeedData.Initialize(services);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred running migrations!.");
+        logger.LogError(ex, "An error occurred running migrations or seed.");
         throw;
     }
 }

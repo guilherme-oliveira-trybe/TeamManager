@@ -1,5 +1,6 @@
 using GFATeamManager.Application.DTOS.Common;
 using GFATeamManager.Application.DTOS.PreRegistration;
+using GFATeamManager.Application.Extensions;
 using GFATeamManager.Application.Services.Interfaces;
 using GFATeamManager.Domain.Entities;
 using GFATeamManager.Domain.Interfaces.Repositories;
@@ -21,17 +22,15 @@ public class PreRegistrationService : IPreRegistrationService
     
     public async Task<BaseResponse<PreRegistrationResponse>> CreateAsync(CreatePreRegistrationRequest request)
     {
-        //TODO: construir uma validação de CPF com Regex.
-        var cpf = new string(request.Cpf.Where(char.IsDigit).ToArray());
-        if (cpf.Length != 11)
+        if (!request.Cpf.IsValidCpf())
             return BaseResponse<PreRegistrationResponse>.Failure("CPF inválido");
 
-        if (await _userRepository.CpfExistsAsync(cpf))
+        if (await _userRepository.CpfExistsAsync(request.Cpf))
             return BaseResponse<PreRegistrationResponse>.Failure("Já existe um usuário cadastrado com este CPF");
 
         var preRegistration = new PreRegistration
         {
-            Cpf = cpf,
+            Cpf = request.Cpf,
             Profile = request.Profile
         };
 
@@ -52,7 +51,7 @@ public class PreRegistrationService : IPreRegistrationService
     
     public async Task<BaseResponse<List<PreRegistrationResponse>>> GetByCpfAsync(string cpf)
     {
-        var cleanCpf = new string(cpf.Where(char.IsDigit).ToArray());
+        var cleanCpf = cpf.CleanCpf();
         var preRegistrations = await _preRegistrationRepository.GetUnusedByCpfAsync(cleanCpf);
         
         var response = preRegistrations.Select(MapToResponse).ToList();

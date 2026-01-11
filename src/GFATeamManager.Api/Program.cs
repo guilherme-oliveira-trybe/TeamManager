@@ -31,7 +31,10 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
-        context.Database.Migrate();
+        if (context.Database.IsRelational())
+        {
+            context.Database.Migrate();
+        }
         
         await SeedData.Initialize(services);
     }
@@ -74,3 +77,5 @@ app.MapGet("/", () => new
 .WithName("Root");
 
 app.Run();
+
+public partial class Program { }

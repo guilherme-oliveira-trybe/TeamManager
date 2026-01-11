@@ -27,11 +27,11 @@ public class AuthEndpointsTests : IClassFixture<IntegrationTestFactory>
     public async Task Login_ShouldReturnSuccess_WhenCredentialsAreValid()
     {
         // Arrange
-        var password = "TestPassword123";
+        const string password = "TestPassword123";
         using (var scope = _factory.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            dbContext.Database.EnsureCreated();
+            await dbContext.Database.EnsureCreatedAsync();
 
             if (!dbContext.Users.Any(u => u.Email == "test@user.com"))
             {

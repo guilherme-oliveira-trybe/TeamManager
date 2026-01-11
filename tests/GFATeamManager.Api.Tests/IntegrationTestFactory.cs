@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GFATeamManager.Api.Tests;
 
-public class IntegrationTestFactory : WebApplicationFactory<Program>
+public abstract class IntegrationTestFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -14,7 +14,6 @@ public class IntegrationTestFactory : WebApplicationFactory<Program>
         Environment.SetEnvironmentVariable("JWT_ISSUER", "GFATeamManagerTest");
         Environment.SetEnvironmentVariable("JWT_AUDIENCE", "GFATeamManagerTest");
         Environment.SetEnvironmentVariable("JWT_EXPIRATION_HOURS", "1");
-        // Required for SeedData but we're skipping seed logic by manually seeding
         Environment.SetEnvironmentVariable("ROOT_EMAIL", "test@test.com");
         Environment.SetEnvironmentVariable("ROOT_PASSWORD", "test");
         Environment.SetEnvironmentVariable("ROOT_NAME", "Test");

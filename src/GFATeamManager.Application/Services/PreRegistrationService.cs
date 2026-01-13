@@ -31,7 +31,9 @@ public class PreRegistrationService : IPreRegistrationService
         var preRegistration = new PreRegistration
         {
             Cpf = request.Cpf,
-            Profile = request.Profile
+            Profile = request.Profile,
+            Unit = request.Unit,
+            Position = request.Position
         };
 
         await _preRegistrationRepository.AddAsync(preRegistration);
@@ -71,7 +73,9 @@ public class PreRegistrationService : IPreRegistrationService
         preRegistration = new PreRegistration
         {
             Cpf = preRegistration.Cpf,
-            Profile = preRegistration.Profile
+            Profile = preRegistration.Profile,
+            Unit = preRegistration.Unit,
+            Position = preRegistration.Position
         };
 
         await _preRegistrationRepository.AddAsync(preRegistration);
@@ -86,6 +90,8 @@ public class PreRegistrationService : IPreRegistrationService
             Cpf = entity.Cpf,
             ActivationCode = entity.ActivationCode,
             Profile = entity.Profile,
+            Unit = entity.Unit?.ToString(),
+            Position = entity.Position?.ToString(),
             ExpirationDate = entity.ExpirationDate,
             IsUsed = entity.IsUsed,
             UsedAt = entity.UsedAt,

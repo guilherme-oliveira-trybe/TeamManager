@@ -140,5 +140,19 @@ public static class UserEndpoints
         .WithName("DeleteUser")
         .RequireAuthorization("AdminOnly")
         .RequireRateLimiting("admin");
+
+        group.MapPatch("/{id:guid}/position", async (
+            Guid id,
+            UpdateUserPositionRequest request,
+            IUserService service) =>
+        {
+            var result = await service.UpdatePositionAsync(id, request);
+            return result.IsSuccess 
+                ? Results.Ok(result)
+                : Results.BadRequest(result);
+        })
+        .WithName("UpdateUserPosition")
+        .RequireAuthorization("AdminOnly")
+        .RequireRateLimiting("admin");
     }
 }

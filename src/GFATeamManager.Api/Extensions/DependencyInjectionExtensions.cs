@@ -12,6 +12,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPreRegistrationRepository, PreRegistrationRepository>();
         services.AddScoped<IPasswordResetRequestRepository, PasswordResetRequestRepository>();
+        services.AddScoped<IActivityRepository, ActivityRepository>();
         return services;
     }
 
@@ -19,6 +20,7 @@ public static class DependencyInjectionExtensions
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPreRegistrationService, PreRegistrationService>();
+        services.AddScoped<IActivityService, ActivityService>();
         return services;
     }
 }

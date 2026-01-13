@@ -7,7 +7,7 @@ using GFATeamManager.Infrastructure.Data.Seed;
 using GFATeamManager.Application.Validators.Auth;
 using GFATeamManager.Infrastructure.Data.Context;
 
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +61,7 @@ app.UseAuthorization();
 app.MapPreRegistrationEndpoints();
 app.MapUserEndpoints();
 app.MapAuthEndpoints();
+app.MapActivityEndpoints();
 
 app.MapGet("/", () => new
 {

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using GFATeamManager.Domain.Enums;
 
 namespace GFATeamManager.Api.Extensions;
 
@@ -38,5 +39,23 @@ public static class ClaimsPrincipalExtensions
             return true;
     
         return user.GetUserId() == targetUserId;
+    }
+
+    public static PlayerUnit? GetUserUnit(this ClaimsPrincipal user)
+    {
+        var claim = user.FindFirst("unit")?.Value;
+        return claim != null ? Enum.Parse<PlayerUnit>(claim) : null;
+    }
+
+    public static PlayerPosition? GetUserPosition(this ClaimsPrincipal user)
+    {
+        var claim = user.FindFirst("position")?.Value;
+        return claim != null ? Enum.Parse<PlayerPosition>(claim) : null;
+    }
+    
+    public static ProfileType GetUserProfile(this ClaimsPrincipal user)
+    {
+        var claim = user.FindFirst(ClaimTypes.Role)?.Value; 
+        return claim != null ? Enum.Parse<ProfileType>(claim) : throw new UnauthorizedAccessException("Role not found");
     }
 }

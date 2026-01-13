@@ -14,6 +14,8 @@ public class UserResponse
     public int Height { get; set; }
     public ProfileType Profile { get; set; }
     public UserStatus Status { get; set; }
+    public string? Unit { get; set; }
+    public string? Position { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ActivatedAt { get; set; }
     

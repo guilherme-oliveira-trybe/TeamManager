@@ -51,6 +51,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Status)
             .HasConversion<int>()
             .IsRequired();
+            
+        builder.Property(u => u.Unit)
+            .HasConversion<int>();
+
+        builder.Property(u => u.Position)
+            .HasConversion<int>();
 
         builder.Property(u => u.BirthDate)
             .IsRequired();

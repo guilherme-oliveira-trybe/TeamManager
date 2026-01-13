@@ -13,6 +13,13 @@ public class AppDbContext : DbContext
     public DbSet<PreRegistration> PreRegistrations => Set<PreRegistration>();
     public DbSet<EmergencyContact> EmergencyContacts => Set<EmergencyContact>();
     public DbSet<PasswordResetRequest> PasswordResetRequests => Set<PasswordResetRequest>();
+    public DbSet<Activity> Activities => Set<Activity>();
+    public DbSet<ActivityItem> ActivityItems => Set<ActivityItem>();
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", false);
+    }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

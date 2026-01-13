@@ -8,6 +8,8 @@ public class User : BaseEntity
     public string PasswordHash { get; set; } = string.Empty;
     public ProfileType Profile { get; set; }
     public UserStatus Status { get; set; }
+    public PlayerUnit? Unit { get; set; }
+    public PlayerPosition? Position { get; set; }
 
     public string FullName { get; set; } = string.Empty;
     public DateTime BirthDate { get; set; }

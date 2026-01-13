@@ -29,6 +29,12 @@ public class PreRegistrationConfiguration : IEntityTypeConfiguration<PreRegistra
         builder.Property(p => p.Profile)
             .HasConversion<int>()
             .IsRequired();
+            
+        builder.Property(p => p.Unit)
+            .HasConversion<int>();
+
+        builder.Property(p => p.Position)
+            .HasConversion<int>();
 
         builder.Property(p => p.ExpirationDate)
             .IsRequired();

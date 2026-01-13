@@ -32,6 +32,12 @@ public class JwtService : IJwtService
             new(ClaimTypes.Role, user.Profile.ToString())
         };
 
+        if (user.Unit.HasValue)
+            claims.Add(new Claim("unit", user.Unit.Value.ToString()));
+
+        if (user.Position.HasValue)
+            claims.Add(new Claim("position", user.Position.Value.ToString()));
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),

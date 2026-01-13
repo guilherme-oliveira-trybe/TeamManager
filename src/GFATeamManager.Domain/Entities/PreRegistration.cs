@@ -6,7 +6,9 @@ public class PreRegistration : BaseEntity
 {
     public string Cpf { get; set; } = string.Empty;
     public ProfileType Profile { get; set; }
-    public string ActivationCode { get; set; } = string.Empty;
+    public PlayerUnit? Unit { get; set; }
+    public PlayerPosition? Position { get; set; }
+    public string ActivationCode { get; set; }
     public DateTime ExpirationDate { get; set; }
     public bool IsUsed { get; set; }
     public DateTime? UsedAt { get; set; }

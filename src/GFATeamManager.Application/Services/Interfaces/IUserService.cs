@@ -11,6 +11,7 @@ public interface IUserService
     Task<BaseResponse<UserResponse>> GetByCpfAsync(string cpf);
     Task<BaseResponse<List<UserResponse>>> GetByStatusAsync(UserStatus status);
     Task<BaseResponse<UserResponse>> UpdateAsync(Guid id, UpdateUserRequest request);
+    Task<BaseResponse<UserResponse>> UpdatePositionAsync(Guid id, UpdateUserPositionRequest request);
     Task<OperationResponse> ActivateAsync(Guid userId, Guid adminId);
     Task<OperationResponse> DeactivateAsync(Guid userId);
     Task<OperationResponse> DeleteAsync(Guid userId);

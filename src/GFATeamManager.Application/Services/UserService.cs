@@ -44,6 +44,8 @@ public class UserService : IUserService
             Cpf = cpf,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             Profile = preRegistration.Profile,
+            Unit = preRegistration.Unit,
+            Position = preRegistration.Position,
             Status = UserStatus.AwaitingActivation,
             FullName = request.FullName,
             BirthDate = request.BirthDate,
@@ -168,6 +170,21 @@ public class UserService : IUserService
 
         return OperationResponse.Success();
     }
+
+    public async Task<BaseResponse<UserResponse>> UpdatePositionAsync(Guid id, UpdateUserPositionRequest request)
+    {
+        var user = await _userRepository.GetByIdAsync(id);
+        
+        if (user == null)
+            return BaseResponse<UserResponse>.Failure("Usuário não encontrado");
+
+        user.Unit = request.Unit;
+        user.Position = request.Position;
+
+        await _userRepository.UpdateAsync(user);
+
+        return BaseResponse<UserResponse>.Success(MapToResponse(user));
+    }
     
     internal static UserResponse MapToResponse(User user)
     {
@@ -183,6 +200,8 @@ public class UserService : IUserService
             Height = user.Height,
             Profile = user.Profile,
             Status = user.Status,
+            Unit = user.Unit?.ToString(),
+            Position = user.Position?.ToString(),
             CreatedAt = user.CreatedAt,
             ActivatedAt = user.ActivatedAt,
             EmergencyContact = user.EmergencyContact != null 

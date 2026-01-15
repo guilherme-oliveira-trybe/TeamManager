@@ -62,6 +62,9 @@ app.MapPreRegistrationEndpoints();
 app.MapUserEndpoints();
 app.MapAuthEndpoints();
 app.MapActivityEndpoints();
+app.MapDepartmentEndpoints();
+app.MapSectorEndpoints();
+app.MapStaffMemberEndpoints();
 
 app.MapGet("/", () => new
 {

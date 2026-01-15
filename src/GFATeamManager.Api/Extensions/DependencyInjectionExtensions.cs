@@ -13,6 +13,9 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IPreRegistrationRepository, PreRegistrationRepository>();
         services.AddScoped<IPasswordResetRequestRepository, PasswordResetRequestRepository>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+        services.AddScoped<ISectorRepository, SectorRepository>();
+        services.AddScoped<IStaffMemberRepository, StaffMemberRepository>();
         return services;
     }
 
@@ -21,6 +24,9 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPreRegistrationService, PreRegistrationService>();
         services.AddScoped<IActivityService, ActivityService>();
+        services.AddScoped<IDepartmentService, DepartmentService>();
+        services.AddScoped<ISectorService, SectorService>();
+        services.AddScoped<IStaffMemberService, StaffMemberService>();
         return services;
     }
 }

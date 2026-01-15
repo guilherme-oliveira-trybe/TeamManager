@@ -15,6 +15,9 @@ public class AppDbContext : DbContext
     public DbSet<PasswordResetRequest> PasswordResetRequests => Set<PasswordResetRequest>();
     public DbSet<Activity> Activities => Set<Activity>();
     public DbSet<ActivityItem> ActivityItems => Set<ActivityItem>();
+    public DbSet<Department> Departments => Set<Department>();
+    public DbSet<Sector> Sectors => Set<Sector>();
+    public DbSet<StaffMember> StaffMembers => Set<StaffMember>();
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

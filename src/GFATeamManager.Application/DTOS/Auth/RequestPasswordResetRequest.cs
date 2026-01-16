@@ -1,4 +1,4 @@
-namespace GFATeamManager.Application.DTOs.Auth;
+namespace GFATeamManager.Application.DTOS.Auth;
 
 public class RequestPasswordResetRequest
 {

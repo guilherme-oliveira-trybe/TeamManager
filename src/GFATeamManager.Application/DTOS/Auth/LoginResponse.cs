@@ -1,5 +1,3 @@
-using GFATeamManager.Application.DTOS.User;
-
 namespace GFATeamManager.Application.DTOS.Auth;
 
 public class LoginResponse

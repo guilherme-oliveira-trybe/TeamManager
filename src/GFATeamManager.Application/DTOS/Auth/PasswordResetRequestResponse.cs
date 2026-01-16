@@ -1,5 +1,3 @@
-using GFATeamManager.Domain.Enums;
-
 namespace GFATeamManager.Application.DTOs.Auth;
 
 public class PasswordResetRequestResponse

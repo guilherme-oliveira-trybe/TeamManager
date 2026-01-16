@@ -19,7 +19,7 @@ public class DepartmentService : IDepartmentService
 
     public async Task<BaseResponse<DepartmentDetailResponse>> GetByIdAsync(Guid id)
     {
-        var department = await _departmentRepository.GetWithSectorsAsync(id);
+        var department = await _departmentRepository.GetByIdAsync(id);
         if (department == null)
             return BaseResponse<DepartmentDetailResponse>.Failure("Departamento não encontrado");
 
@@ -63,7 +63,7 @@ public class DepartmentService : IDepartmentService
 
     public async Task<OperationResponse> DeleteAsync(Guid userId, Guid id)
     {
-        var department = await _departmentRepository.GetWithSectorsAsync(id);
+        var department = await _departmentRepository.GetByIdAsync(id);
         if (department == null)
             return OperationResponse.Failure("Departamento não encontrado");
 

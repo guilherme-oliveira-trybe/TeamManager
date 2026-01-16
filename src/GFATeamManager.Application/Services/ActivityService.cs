@@ -70,7 +70,7 @@ public class ActivityService : IActivityService
         Guid activityId)
     {
         var activity = await _activityRepository.GetByIdAsync(activityId);
-        if (activity == null) return BaseResponse<ActivityResponse>.Failure("Activity not found");
+        if (activity == null) return BaseResponse<ActivityResponse>.Failure("Atividade não encontrada");
 
         if (profile == ProfileType.Admin)
         {
@@ -78,7 +78,7 @@ public class ActivityService : IActivityService
         }
 
         if (activity.TargetUnit != null && activity.TargetUnit != unit)
-            return BaseResponse<ActivityResponse>.Failure("Activity not accessible");
+            return BaseResponse<ActivityResponse>.Failure("Atividade não acessível");
 
         var visibleItems = FilterItems(activity.Items, unit, position);
         return BaseResponse<ActivityResponse>.Success(MapToResponse(activity, visibleItems));
@@ -87,7 +87,7 @@ public class ActivityService : IActivityService
     public async Task<BaseResponse<ActivityItemResponse>> AddActivityItemAsync(Guid userId, Guid activityId, CreateActivityItemRequest request)
     {
         var activity = await _activityRepository.GetByIdAsync(activityId);
-        if (activity == null) return BaseResponse<ActivityItemResponse>.Failure("Activity not found");
+        if (activity == null) return BaseResponse<ActivityItemResponse>.Failure("Atividade não encontrada");
 
         var item = new ActivityItem
         {
@@ -108,7 +108,7 @@ public class ActivityService : IActivityService
     public async Task<BaseResponse<ActivityResponse>> UpdateActivityAsync(Guid userId, Guid activityId, UpdateActivityRequest request)
     {
         var activity = await _activityRepository.GetByIdAsync(activityId);
-        if (activity == null) return BaseResponse<ActivityResponse>.Failure("Activity not found");
+        if (activity == null) return BaseResponse<ActivityResponse>.Failure("Atividade não encontrada");
 
         activity.Type = request.Type;
         activity.StartDate = request.StartDate;
@@ -124,7 +124,7 @@ public class ActivityService : IActivityService
     public async Task<OperationResponse> DeleteActivityAsync(Guid userId, Guid activityId)
     {
         var activity = await _activityRepository.GetByIdAsync(activityId);
-        if (activity == null) return OperationResponse.Failure("Activity not found");
+        if (activity == null) return OperationResponse.Failure("Atividade não encontrada");
 
         await _activityRepository.DeleteAsync(activityId);
         
@@ -134,10 +134,10 @@ public class ActivityService : IActivityService
     public async Task<BaseResponse<ActivityItemResponse>> UpdateActivityItemAsync(Guid userId, Guid activityId, Guid itemId, UpdateActivityItemRequest request)
     {
         var activity = await _activityRepository.GetByIdAsync(activityId);
-        if (activity == null) return BaseResponse<ActivityItemResponse>.Failure("Activity not found");
+        if (activity == null) return BaseResponse<ActivityItemResponse>.Failure("Atividade não encontrada");
 
         var item = activity.Items.FirstOrDefault(i => i.Id == itemId);
-        if (item == null) return BaseResponse<ActivityItemResponse>.Failure("Activity item not found");
+        if (item == null) return BaseResponse<ActivityItemResponse>.Failure("Item de atividade não encontrado");
 
         item.Title = request.Title;
         item.StartTime = request.StartTime;
@@ -153,10 +153,10 @@ public class ActivityService : IActivityService
     public async Task<OperationResponse> DeleteActivityItemAsync(Guid userId, Guid activityId, Guid itemId)
     {
         var activity = await _activityRepository.GetByIdAsync(activityId);
-        if (activity == null) return OperationResponse.Failure("Activity not found");
+        if (activity == null) return OperationResponse.Failure("Atividade não encontrada");
 
         var item = activity.Items.FirstOrDefault(i => i.Id == itemId);
-        if (item == null) return OperationResponse.Failure("Activity item not found");
+        if (item == null) return OperationResponse.Failure("Item de atividade não encontrado");
 
         activity.Items.Remove(item);
         await _activityRepository.UpdateAsync(activity);

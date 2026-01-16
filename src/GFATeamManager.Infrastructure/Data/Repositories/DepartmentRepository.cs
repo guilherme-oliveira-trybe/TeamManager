@@ -19,11 +19,6 @@ public class DepartmentRepository : BaseRepository<Department>, IDepartmentRepos
             .FirstOrDefaultAsync(d => d.Id == id);
     }
 
-    public async Task<Department?> GetWithSectorsAsync(Guid id)
-    {
-        return await GetByIdAsync(id);
-    }
-
     public async Task<IEnumerable<Department>> GetAllWithSectorsAsync()
     {
         return await _dbSet

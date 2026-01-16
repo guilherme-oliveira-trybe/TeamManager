@@ -339,7 +339,7 @@ public class ActivityServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Contains("Activity not found", result.Errors);
+        Assert.Contains("Atividade não encontrada", result.Errors);
     }
 
     [Fact]
@@ -362,7 +362,7 @@ public class ActivityServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Contains("Activity not accessible", result.Errors);
+        Assert.Contains("Atividade não acessível", result.Errors);
     }
 
     [Fact]
@@ -420,7 +420,7 @@ public class ActivityServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Contains("Activity not found", result.Errors);
+        Assert.Contains("Atividade não encontrada", result.Errors);
     }
 
     [Fact]
@@ -445,7 +445,7 @@ public class ActivityServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Contains("Activity not found", result.Errors);
+        Assert.Contains("Atividade não encontrada", result.Errors);
     }
 
     [Fact]
@@ -462,7 +462,7 @@ public class ActivityServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Contains("Activity not found", result.Errors);
+        Assert.Contains("Atividade não encontrada", result.Errors);
     }
 
     [Fact]
@@ -487,7 +487,7 @@ public class ActivityServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Contains("Activity not found", result.Errors);
+        Assert.Contains("Atividade não encontrada", result.Errors);
     }
 
     [Fact]
@@ -517,7 +517,7 @@ public class ActivityServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Contains("Activity item not found", result.Errors);
+        Assert.Contains("Item de atividade não encontrado", result.Errors);
     }
 
     [Fact]
@@ -535,7 +535,7 @@ public class ActivityServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Contains("Activity not found", result.Errors);
+        Assert.Contains("Atividade não encontrada", result.Errors);
     }
 
     [Fact]
@@ -558,6 +558,6 @@ public class ActivityServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Contains("Activity item not found", result.Errors);
+        Assert.Contains("Item de atividade não encontrado", result.Errors);
     }
 }

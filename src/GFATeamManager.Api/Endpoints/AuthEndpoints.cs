@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using FluentValidation;
 using GFATeamManager.Api.Extensions;
-using GFATeamManager.Application.DTOs.Auth;
 using GFATeamManager.Application.DTOS.Auth;
 using GFATeamManager.Application.Services.Interfaces;
 

@@ -1,5 +1,5 @@
 using FluentValidation;
-using GFATeamManager.Application.DTOs.Auth;
+using GFATeamManager.Application.DTOS.Auth;
 using GFATeamManager.Application.Extensions;
 
 namespace GFATeamManager.Application.Validators.Auth;

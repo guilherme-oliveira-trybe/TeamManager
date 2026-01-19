@@ -1,0 +1,28 @@
+﻿{
+  "profiles": {
+    "[DEV]": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_URLS": "http://*:5000",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_HOST": "localhost",
+        "DATABASE_PORT": "5432",
+        "DATABASE_NAME": "gfateammanager",
+        "DATABASE_USER": "postgres",
+        "DATABASE_PASSWORD": "Dev@123456",
+        "JWT_SECRET_KEY": "GFATeamManager2024SuperSecretKeyForDevelopment32Chars",
+        "JWT_ISSUER": "GFATeamManager",
+        "JWT_AUDIENCE": "GFATeamManager",
+        "JWT_EXPIRATION_HOURS": "8",
+        "ALLOWED_ORIGINS": "http://localhost:3000,http://localhost:3001",
+        "ROOT_EMAIL": "guilherme.moliveira@hotmail.com",
+        "ROOT_PASSWORD": "Resident@4",
+        "ROOT_NAME": "root",
+        "ROOT_CPF": "09227869689",
+        "ROOT_PHONE": "31988842040"
+      }
+    }
+  }
+}

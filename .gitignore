@@ -1,41 +1,30 @@
-## Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
+# Backend
+backend/bin/
+backend/obj/
+backend/*.user
+backend/.vs/
+backend/src/**/bin/
+backend/src/**/obj/
+backend/tests/**/bin/
+backend/tests/**/obj/
 
-## Visual Studio / Rider
-.vs/
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/.DS_Store
+frontend/public/sw.js
+frontend/public/workbox-*.js
+
+# IDEs
 .idea/
-*.swp
-*.swo
-*~
-*.user
+.vscode/
 *.suo
+*.user
 *.userosscache
-
-## Sensitive files - NÃO COMMITAR!
-**/Properties/launchSettings.json
-appsettings.Development.json
-appsettings.*.json
-!appsettings.json
-
-## Environment variables
-.env
-.env.local
-
-## .NET
-*.rsuser
 *.sln.docstates
-project.lock.json
-project.fragment.lock.json
-artifacts/
 
-# Docker
-docker-compose.override.yml
+# OS
+.DS_Store
+Thumbs.db

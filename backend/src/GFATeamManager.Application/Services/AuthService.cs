@@ -39,12 +39,6 @@ public class AuthService : IAuthService
     {
         if (BCrypt.Net.BCrypt.Verify(request.Password, validResetRequest.TemporaryPasswordHash!))
         {
-            validResetRequest.MarkAsUsed();
-            await _passwordResetRequestRepository.UpdateAsync(validResetRequest);
-
-            user.PasswordChanged();
-            await _userRepository.UpdateAsync(user);
-
             var token = _jwtService.GenerateToken(user);
             var expiresAt = DateTime.UtcNow.AddHours(8);
 
@@ -52,6 +46,7 @@ public class AuthService : IAuthService
             {
                 Token = token,
                 ExpiresAt = expiresAt,
+                RequiresPasswordChange = user.RequiresPasswordChange
             });
         }
     }
@@ -88,6 +83,7 @@ public class AuthService : IAuthService
     {
         Token = normalToken,
         ExpiresAt = normalExpiresAt,
+        RequiresPasswordChange = user.RequiresPasswordChange
     });
 }
 
@@ -98,10 +94,10 @@ public class AuthService : IAuthService
         if (user == null)
             return OperationResponse.Failure("Usuário não encontrado");
 
+        var validResetRequest = await _passwordResetRequestRepository.GetValidRequestByUserIdAsync(userId);
+        
         if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
         {
-            var validResetRequest = await _passwordResetRequestRepository.GetValidRequestByUserIdAsync(userId);
-        
             if (validResetRequest == null || 
                 !BCrypt.Net.BCrypt.Verify(request.CurrentPassword, validResetRequest.TemporaryPasswordHash!))
             {
@@ -118,6 +114,12 @@ public class AuthService : IAuthService
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
         user.PasswordChanged();
         await _userRepository.UpdateAsync(user);
+        
+        if (validResetRequest != null)
+        {
+            validResetRequest.MarkAsUsed();
+            await _passwordResetRequestRepository.UpdateAsync(validResetRequest);
+        }
 
         return OperationResponse.Success();
     }

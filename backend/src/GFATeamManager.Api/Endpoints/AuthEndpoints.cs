@@ -25,7 +25,7 @@ public static class AuthEndpoints
                 var result = await service.LoginAsync(request);
                 return result.IsSuccess
                     ? Results.Ok(result)
-                    : Results.Unauthorized();
+                    : Results.BadRequest(result);
             })
             .WithName("Login")
             .AllowAnonymous()

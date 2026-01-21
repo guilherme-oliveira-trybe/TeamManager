@@ -11,6 +11,13 @@ public class PasswordResetRequestRepository : BaseRepository<PasswordResetReques
     {
     }
 
+    public override async Task<PasswordResetRequest?> GetByIdAsync(Guid id)
+    {
+        return await _dbSet
+            .Include(p => p.User)
+            .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
     public async Task<IEnumerable<PasswordResetRequest>> GetPendingRequestsAsync()
     {
         return await _dbSet

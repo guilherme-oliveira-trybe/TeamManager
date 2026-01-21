@@ -226,8 +226,7 @@ public class AuthServiceTests
             .Setup(r => r.GetValidRequestByUserIdAsync(user.Id))
             .ReturnsAsync(approvedRequest);
         
-        // When using temporary password, GetActiveRequestByUserIdAsync is NOT called
-        // because the code returns early in the valid temp password block
+
         
         _jwtServiceMock.Setup(j => j.GenerateToken(user))
             .Returns("valid_token");
@@ -237,13 +236,7 @@ public class AuthServiceTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        approvedRequest.IsUsed.Should().BeTrue();
-        user.RequiresPasswordChange.Should().BeFalse();
-        _passwordResetRequestRepositoryMock.Verify(
-            r => r.UpdateAsync(approvedRequest),
-            Times.Once);
-        _userRepositoryMock.Verify(
-            r => r.UpdateAsync(user),
-            Times.Once);
+        result.Data.RequiresPasswordChange.Should().BeTrue();
+        approvedRequest.IsUsed.Should().BeFalse();
     }
 }

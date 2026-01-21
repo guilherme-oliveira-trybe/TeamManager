@@ -9,26 +9,21 @@ interface LoginResponse {
   data?: {
     token: string;
     expiresAt: string;
+    requiresPasswordChange: boolean;
   };
   errors: string[];
 }
 
-/**
- * POST /api/auth/login
- * Handles user login and sets httpOnly cookie
- */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Call backend API
     const { data } = await axios.post<LoginResponse>(
       `${BACKEND_URL}/api/auth/login`,
       body
     );
 
     if (data.isSuccess && data.data) {
-      // Set httpOnly cookie with JWT token
       const cookieStore = await cookies();
       cookieStore.set({
         name: 'auth_token',
@@ -36,11 +31,14 @@ export async function POST(request: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 8, // 8 hours
+        maxAge: 60 * 60 * 8,
         path: '/',
       });
 
-      return NextResponse.json({ success: true });
+      return NextResponse.json({ 
+        success: true,
+        requiresPasswordChange: data.data.requiresPasswordChange 
+      });
     }
 
     return NextResponse.json(data, { status: 401 });

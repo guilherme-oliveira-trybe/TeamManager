@@ -1,20 +1,13 @@
-/**
- * React Query hooks for API calls
- * Handles authentication-related API requests
- */
-
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useToast } from '@/hooks/useToast';
-import type { LoginFormData } from '@/lib/validations/schemas';
+import type { LoginFormData, ChangePasswordFormData } from '@/lib/validations/schemas';
 
-/**
- * Hook for login mutation
- * Calls Next.js API route (which sets httpOnly cookie)
- */
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
 export function useLogin() {
   const router = useRouter();
   const toast = useToast();
@@ -24,10 +17,17 @@ export function useLogin() {
       const response = await axios.post('/api/auth/login', data);
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success('Login realizado com sucesso!');
-      router.push('/dashboard');
-      router.refresh(); // Refresh to update proxy/middleware
+      
+      if (data?.requiresPasswordChange) {
+        router.push('/change-password');
+        toast.info('Por favor, altere sua senha temporária.');
+      } else {
+        router.push('/dashboard');
+      }
+      
+      router.refresh();
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
@@ -40,9 +40,6 @@ export function useLogin() {
   });
 }
 
-/**
- * Hook for logout mutation
- */
 export function useLogout() {
   const router = useRouter();
   const toast = useToast();
@@ -59,6 +56,31 @@ export function useLogout() {
     },
     onError: () => {
       toast.error('Erro ao fazer logout');
+    },
+  });
+}
+
+export function useChangePassword() {
+  const router = useRouter();
+  const toast = useToast();
+
+  return useMutation({
+    mutationFn: async (data: ChangePasswordFormData) => {
+      const response = await axios.post('/api/auth/change-password', data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Senha alterada com sucesso!');
+      router.push('/dashboard');
+      router.refresh();
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.errors?.[0] || 'Erro ao alterar senha';
+        toast.error(message);
+      } else {
+        toast.error('Erro ao alterar senha');
+      }
     },
   });
 }

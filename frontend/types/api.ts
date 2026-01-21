@@ -30,6 +30,7 @@ export interface OperationResponse {
 export interface LoginResponse {
   token: string;
   expiresAt: string;
+  requiresPasswordChange: boolean;
 }
 
 /**

@@ -41,6 +41,7 @@ export default function ChangePasswordPage() {
                         type="password"
                         placeholder="Digite a senha temporária"
                         disabled={isPending}
+                        data-testid="current-password-input"
                         className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                       />
                     </FormControl>
@@ -60,6 +61,7 @@ export default function ChangePasswordPage() {
                         type="password"
                         placeholder="Digite a nova senha"
                         disabled={isPending}
+                        data-testid="new-password-input"
                         className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                       />
                     </FormControl>
@@ -79,6 +81,7 @@ export default function ChangePasswordPage() {
                         type="password"
                         placeholder="Confirme a nova senha"
                         disabled={isPending}
+                        data-testid="confirm-password-input"
                         className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                       />
                     </FormControl>
@@ -88,6 +91,7 @@ export default function ChangePasswordPage() {
               />
               <Button
                 type="submit"
+                data-testid="change-password-submit"
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600"
                 disabled={isPending}
               >

@@ -135,4 +135,84 @@ describe('Login Page', () => {
       expect(mockPush).not.toHaveBeenCalledWith('/dashboard');
     }, { timeout: 2000 });
   });
+
+  describe('Temporary Password Login Flow', () => {
+    it('should login successfully with temporary password', async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+
+      const loginInput = screen.getByTestId('login-input');
+      const passwordInput = screen.getByTestId('password-input');
+      const submitButton = screen.getByTestId('login-submit-button');
+
+      // Fill in with temp password credentials
+      await user.type(loginInput, '61120319064');
+      await user.type(passwordInput, 'TEMP_PASS_123');
+      await user.click(submitButton);
+
+      // Should redirect to change-password
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/change-password');
+      }, { timeout: 5000 });
+    });
+
+    it('should redirect to /change-password when RequiresPasswordChange is true', async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+
+      const loginInput = screen.getByTestId('login-input');
+      const passwordInput = screen.getByTestId('password-input');
+      const submitButton = screen.getByTestId('login-submit-button');
+
+      await user.type(loginInput, '61120319064');
+      await user.type(passwordInput, 'TEMP_PASS_123');
+      await user.click(submitButton);
+
+      // Verify redirect to change-password, not dashboard
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/change-password');
+        expect(mockPush).not.toHaveBeenCalledWith('/dashboard');
+      }, { timeout: 5000 });
+    });
+
+    it('should NOT redirect to change-password with normal login', async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+
+      const loginInput = screen.getByTestId('login-input');
+      const passwordInput = screen.getByTestId('password-input');
+      const submitButton = screen.getByTestId('login-submit-button');
+
+      // Normal login
+      await user.type(loginInput, '61120319064');
+      await user.type(passwordInput, 'Teste@123');
+      await user.click(submitButton);
+
+      // Should redirect to dashboard, not change-password
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/dashboard');
+        expect(mockPush).not.toHaveBeenCalledWith('/change-password');
+      }, { timeout: 5000 });
+    });
+
+    it('should show error when login blocked with APPROVED request', async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+
+      const loginInput = screen.getByTestId('login-input');
+      const passwordInput = screen.getByTestId('password-input');
+      const submitButton = screen.getByTestId('login-submit-button');
+
+      // Try to login with old password when APPROVED request exists
+      await user.type(loginInput, 'blocked@user.com');
+      await user.type(passwordInput, 'OldPassword@123');
+      await user.click(submitButton);
+
+      // Should NOT redirect
+      await waitFor(() => {
+        expect(mockPush).not.toHaveBeenCalledWith('/dashboard');
+        expect(mockPush).not.toHaveBeenCalledWith('/change-password');
+      }, { timeout: 3000 });
+    });
+  });
 });

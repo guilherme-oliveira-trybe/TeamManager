@@ -11,11 +11,27 @@ export const handlers = [
   http.post(`${API_URL}/api/auth/login`, async ({ request }): Promise<any> => {
     const body = await request.json() as { login: string; password: string };
     
-    // Simulate successful login
+    // Simulate successful login with normal password
     if (body.login === '61120319064' && body.password === 'Teste@123') {
       return HttpResponse.json(
-        { success: true },
+        { success: true, requiresPasswordChange: false },
         { status: 200 }
+      );
+    }
+    
+    // Simulate successful login with temporary password
+    if (body.login === '61120319064' && body.password === 'TEMP_PASS_123') {
+      return HttpResponse.json(
+        { success: true, requiresPasswordChange: true },
+        { status: 200 }
+      );
+    }
+    
+    // Simulate blocked login when APPROVED reset request exists
+    if (body.login === 'blocked@user.com' && body.password === 'OldPassword@123') {
+      return HttpResponse.json(
+        { errors: ['Uma solicitação de reset de senha foi aprovada. Por favor, utilize a senha temporária enviada.'] },
+        { status: 400 }
       );
     }
     
@@ -66,6 +82,63 @@ export const handlers = [
       data: null,
       errors: ['CPF ou email não encontrado'],
     }, { status: 404 });
+  }),
+
+  // Change Password endpoint
+  http.post(`${API_URL}/api/auth/change-password`, async ({ request }): Promise<any> => {
+    const body = await request.json() as { currentPassword: string; newPassword: string; confirmNewPassword: string };
+    const authHeader = request.headers.get('cookie');
+    
+    // Simulate unauthorized (no token)
+    if (!authHeader || !authHeader.includes('auth_token')) {
+      return HttpResponse.json(
+        { errors: ['Não autorizado'] },
+        { status: 401 }
+      );
+    }
+    
+    // Simulate passwords don't match
+    if (body.newPassword !== body.confirmNewPassword) {
+      return HttpResponse.json({
+        isSuccess: false,
+        data: null,
+        errors: ['As senhas não coincidem'],
+      }, { status: 400 });
+    }
+    
+    // Simulate password too short
+    if (body.newPassword.length < 8) {
+      return HttpResponse.json({
+        isSuccess: false,
+        data: null,
+        errors: ['A senha deve ter no mínimo 8 caracteres'],
+      }, { status: 400 });
+    }
+    
+    // Simulate success with temporary password
+    if (body.currentPassword === 'TEMP_PASS_123') {
+      return HttpResponse.json({
+        isSuccess: true,
+        data: null,
+        errors: [],
+      }, { status: 200 });
+    }
+    
+    // Simulate success with normal password
+    if (body.currentPassword === 'Teste@123') {
+      return HttpResponse.json({
+        isSuccess: true,
+        data: null,
+        errors: [],
+      }, { status: 200 });
+    }
+    
+    // Simulate invalid current password
+    return HttpResponse.json({
+      isSuccess: false,
+      data: null,
+      errors: ['Senha atual incorreta'],
+    }, { status: 400 });
   }),
 
   // Logout endpoint

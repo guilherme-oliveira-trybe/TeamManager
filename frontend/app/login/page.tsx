@@ -43,7 +43,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-4">
+            <form onSubmit={onSubmit} className="space-y-4" role="form" aria-label="Formulário de Login">
               <FormField
                 control={form.control}
                 name="login"
@@ -53,6 +53,7 @@ export default function LoginPage() {
                     <FormControl>
                       <Input
                         {...field}
+                        data-testid="login-input"
                         placeholder="Digite seu CPF ou email"
                         disabled={isPending}
                         className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
@@ -71,6 +72,7 @@ export default function LoginPage() {
                     <FormControl>
                       <Input
                         {...field}
+                        data-testid="password-input"
                         type="password"
                         placeholder="Digite sua senha"
                         disabled={isPending}
@@ -83,6 +85,7 @@ export default function LoginPage() {
               />
               <Button
                 type="submit"
+                data-testid="login-submit-button"
                 className="w-full bg-[#FFD700] hover:bg-[#FFC700] text-black font-semibold"
                 disabled={isPending}
               >
@@ -94,12 +97,14 @@ export default function LoginPage() {
           <div className="mt-6 space-y-2 text-center text-sm">
             <Link
               href="/password-reset"
+              data-testid="forgot-password-link"
               className="block text-zinc-400 hover:text-[#FFD700] transition-colors"
             >
               Esqueceu sua senha?
             </Link>
             <Link
               href="/complete-registration"
+              data-testid="complete-registration-link"
               className="block text-zinc-400 hover:text-[#FFD700] transition-colors"
             >
               Primeiro acesso? Complete seu cadastro

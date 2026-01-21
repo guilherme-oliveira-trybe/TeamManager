@@ -42,6 +42,9 @@ public class AuthService : IAuthService
             validResetRequest.MarkAsUsed();
             await _passwordResetRequestRepository.UpdateAsync(validResetRequest);
 
+            user.PasswordChanged();
+            await _userRepository.UpdateAsync(user);
+
             var token = _jwtService.GenerateToken(user);
             var expiresAt = DateTime.UtcNow.AddHours(8);
 
@@ -58,6 +61,25 @@ public class AuthService : IAuthService
 
     if (user.Status != UserStatus.Active)
         return BaseResponse<LoginResponse>.Failure("Usuário não está ativo. Entre em contato com o administrador.");
+
+    var activeResetRequest = await _passwordResetRequestRepository
+        .GetActiveRequestByUserIdAsync(user.Id);
+    
+    if (activeResetRequest != null)
+    {
+        if (activeResetRequest.ApprovedAt == null)
+        {
+            activeResetRequest.Delete();
+            await _passwordResetRequestRepository.UpdateAsync(activeResetRequest);
+        }
+        else
+        {
+            return BaseResponse<LoginResponse>.Failure(
+                "Você possui uma solicitação de reset de senha aprovada pelo administrador. " +
+                "Por favor, utilize a senha temporária que foi enviada."
+            );
+        }
+    }
 
     var normalToken = _jwtService.GenerateToken(user);
     var normalExpiresAt = DateTime.UtcNow.AddHours(8);

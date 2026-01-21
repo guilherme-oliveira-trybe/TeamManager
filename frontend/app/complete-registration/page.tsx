@@ -58,6 +58,7 @@ export default function CompleteRegistrationPage() {
               {[1, 2, 3].map((s) => (
                 <div
                   key={s}
+                  data-testid="step-indicator"
                   className={`h-2 w-12 rounded-full ${
                     s === step ? 'bg-[#FFD700]' : s < step ? 'bg-[#FFD700]/50' : 'bg-zinc-700'
                   }`}
@@ -68,7 +69,7 @@ export default function CompleteRegistrationPage() {
           <CardTitle className="text-2xl font-bold text-white">
             Complete seu Cadastro
           </CardTitle>
-          <CardDescription className="text-zinc-400">
+          <CardDescription className="text-zinc-400" data-testid="step-title">
             {step === 1 && 'Passo 1: Validação'}
             {step === 2 && 'Passo 2: Dados Pessoais'}
             {step === 3 && 'Passo 3: Senha e Contato de Emergência'}
@@ -89,6 +90,7 @@ export default function CompleteRegistrationPage() {
                         <FormControl>
                           <Input
                             {...field}
+                            data-testid="registration-cpf-input"
                             placeholder="000.000.000-00"
                             className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                           />
@@ -106,6 +108,7 @@ export default function CompleteRegistrationPage() {
                         <FormControl>
                           <Input
                             {...field}
+                            data-testid="registration-code-input"
                             placeholder="XXXXXXXX"
                             maxLength={8}
                             className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 uppercase"
@@ -130,6 +133,7 @@ export default function CompleteRegistrationPage() {
                         <FormControl>
                           <Input
                             {...field}
+                            data-testid="registration-name-input"
                             placeholder="Seu nome completo"
                             className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                           />
@@ -148,6 +152,7 @@ export default function CompleteRegistrationPage() {
                           <FormControl>
                             <Input
                               type="date"
+                              data-testid="registration-birthdate-input"
                               value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                               onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
                               className="bg-zinc-800 border-zinc-700 text-white"
@@ -167,6 +172,7 @@ export default function CompleteRegistrationPage() {
                             <Input
                               type="number"
                               {...field}
+                              data-testid="registration-weight-input"
                               onChange={(e) => field.onChange(e.target.valueAsNumber)}
                               className="bg-zinc-800 border-zinc-700 text-white"
                             />
@@ -185,6 +191,7 @@ export default function CompleteRegistrationPage() {
                             <Input
                               type="number"
                               {...field}
+                              data-testid="registration-height-input"
                               onChange={(e) => field.onChange(e.target.valueAsNumber)}
                               className="bg-zinc-800 border-zinc-700 text-white"
                             />
@@ -204,6 +211,7 @@ export default function CompleteRegistrationPage() {
                           <FormControl>
                             <Input
                               {...field}
+                              data-testid="registration-phone-input"
                               placeholder="(11) 98765-4321"
                               className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                             />
@@ -221,6 +229,7 @@ export default function CompleteRegistrationPage() {
                           <FormControl>
                             <Input
                               {...field}
+                              data-testid="registration-email-input"
                               type="email"
                               placeholder="seu@email.com"
                               className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
@@ -247,6 +256,7 @@ export default function CompleteRegistrationPage() {
                           <FormControl>
                             <Input
                               {...field}
+                              data-testid="registration-password-input"
                               type="password"
                               placeholder="Mínimo 8 caracteres"
                               className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
@@ -265,6 +275,7 @@ export default function CompleteRegistrationPage() {
                           <FormControl>
                             <Input
                               {...field}
+                              data-testid="registration-confirm-password-input"
                               type="password"
                               placeholder="Repita a senha"
                               className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
@@ -287,6 +298,7 @@ export default function CompleteRegistrationPage() {
                             <FormControl>
                               <Input
                                 {...field}
+                                data-testid="emergency-name-input"
                                 placeholder="Nome do contato"
                                 className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                               />
@@ -304,6 +316,7 @@ export default function CompleteRegistrationPage() {
                             <FormControl>
                               <Input
                                 {...field}
+                                data-testid="emergency-phone-input"
                                 placeholder="(11) 98765-4321"
                                 className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
                               />
@@ -324,6 +337,7 @@ export default function CompleteRegistrationPage() {
                     type="button"
                     variant="outline"
                     onClick={prevStep}
+                    data-testid={`step${step}-back-button`}
                     className="flex-1 border-zinc-700 text-white hover:bg-zinc-800"
                     disabled={isPending}
                   >
@@ -335,6 +349,7 @@ export default function CompleteRegistrationPage() {
                   <Button
                     type="button"
                     onClick={nextStep}
+                    data-testid={`step${step}-next-button`}
                     className="flex-1 bg-[#FFD700] hover:bg-[#FFC700] text-black font-semibold"
                   >
                     Próximo
@@ -344,6 +359,7 @@ export default function CompleteRegistrationPage() {
                 {step === 3 && (
                   <Button
                     type="submit"
+                    data-testid="registration-submit-button"
                     className="flex-1 bg-[#FFD700] hover:bg-[#FFC700] text-black font-semibold"
                     disabled={isPending}
                   >

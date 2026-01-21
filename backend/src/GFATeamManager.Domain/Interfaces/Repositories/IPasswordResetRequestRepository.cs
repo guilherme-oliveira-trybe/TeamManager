@@ -6,4 +6,5 @@ public interface IPasswordResetRequestRepository : IBaseRepository<PasswordReset
 {
     Task<IEnumerable<PasswordResetRequest>> GetPendingRequestsAsync();
     Task<PasswordResetRequest?> GetValidRequestByUserIdAsync(Guid userId);
+    Task<PasswordResetRequest?> GetActiveRequestByUserIdAsync(Guid userId);
 }

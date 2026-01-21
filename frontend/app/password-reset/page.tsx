@@ -26,6 +26,7 @@ export default function PasswordResetPage() {
               <Button
                 variant="ghost"
                 size="icon"
+                data-testid="reset-back-button"
                 className="text-zinc-400 hover:text-white hover:bg-zinc-800"
               >
                 <ArrowLeft className="h-5 w-5" />
@@ -51,6 +52,7 @@ export default function PasswordResetPage() {
                     <FormControl>
                       <Input
                         {...field}
+                        data-testid="reset-cpf-input"
                         placeholder="000.000.000-00"
                         disabled={isPending}
                         className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
@@ -69,6 +71,7 @@ export default function PasswordResetPage() {
                     <FormControl>
                       <Input
                         {...field}
+                        data-testid="reset-email-input"
                         type="email"
                         placeholder="seu@email.com"
                         disabled={isPending}
@@ -81,6 +84,7 @@ export default function PasswordResetPage() {
               />
               <Button
                 type="submit"
+                data-testid="reset-submit-button"
                 className="w-full bg-[#FFD700] hover:bg-[#FFC700] text-black font-semibold"
                 disabled={isPending}
               >

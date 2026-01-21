@@ -109,6 +109,11 @@ public class AuthServiceTests
         
         _jwtServiceMock.Setup(j => j.GenerateToken(user))
             .Returns("valid_token");
+        
+        // No active reset request
+        _passwordResetRequestRepositoryMock
+            .Setup(r => r.GetActiveRequestByUserIdAsync(user.Id))
+            .ReturnsAsync((PasswordResetRequest?)null);
 
         // Act
         var result = await _authService.LoginAsync(request);
@@ -117,5 +122,128 @@ public class AuthServiceTests
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().NotBeNull();
         result.Data!.Token.Should().Be("valid_token");
+    }
+    
+    [Fact]
+    public async Task LoginAsync_ShouldSoftDeletePendingRequest_WhenLoggingInWithNormalPassword()
+    {
+        // Arrange
+        var request = new LoginRequest { Login = "user@email.com", Password = "password" };
+        var user = new User
+        {
+            Email = request.Login,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Status = UserStatus.Active
+        };
+        
+        var pendingRequest = new PasswordResetRequest
+        {
+            UserId = user.Id,
+           ApprovedAt = null  // PENDING
+        };
+
+        _userRepositoryMock.Setup(r => r.GetByEmailAsync(request.Login))
+            .ReturnsAsync(user);
+        
+        _passwordResetRequestRepositoryMock
+            .Setup(r => r.GetActiveRequestByUserIdAsync(user.Id))
+            .ReturnsAsync(pendingRequest);
+        
+        _jwtServiceMock.Setup(j => j.GenerateToken(user))
+            .Returns("valid_token");
+
+        // Act
+        var result = await _authService.LoginAsync(request);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        pendingRequest.IsDeleted.Should().BeTrue();
+        pendingRequest.DeletedAt.Should().NotBeNull();
+        _passwordResetRequestRepositoryMock.Verify(
+            r => r.UpdateAsync(pendingRequest),
+            Times.Once);
+    }
+    
+    [Fact]
+    public async Task LoginAsync_ShouldBlockLogin_WhenApprovedRequestExists()
+    {
+        // Arrange
+        var request = new LoginRequest { Login = "user@email.com", Password = "password" };
+        var user = new User
+        {
+            Email = request.Login,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Status = UserStatus.Active
+        };
+        
+        var approvedRequest = new PasswordResetRequest
+        {
+            UserId = user.Id
+        };
+        approvedRequest.Approve(Guid.NewGuid());  // APPROVED
+
+        _userRepositoryMock.Setup(r => r.GetByEmailAsync(request.Login))
+            .ReturnsAsync(user);
+        
+        _passwordResetRequestRepositoryMock
+            .Setup(r => r.GetActiveRequestByUserIdAsync(user.Id))
+            .ReturnsAsync(approvedRequest);
+
+        // Act
+        var result = await _authService.LoginAsync(request);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.Contains("senha temporária"));
+        approvedRequest.IsDeleted.Should().BeFalse();
+    }
+    
+    [Fact]
+    public async Task LoginAsync_ShouldSucceed_WithTemporaryPassword()
+    {
+        // Arrange
+        var user = new User
+        {
+            Email = "user@email.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("oldpassword"),
+            Status = UserStatus.Active
+        };
+        user.RequirePasswordChange();
+        
+        var approvedRequest = new PasswordResetRequest
+        {
+            UserId = user.Id
+        };
+        // Approve() generates temp password and returns it
+        var tempPassword = approvedRequest.Approve(Guid.NewGuid());
+        
+        var request = new LoginRequest { Login = user.Email, Password = tempPassword };
+
+        _userRepositoryMock.Setup(r => r.GetByEmailAsync(request.Login))
+            .ReturnsAsync(user);
+        
+        _passwordResetRequestRepositoryMock
+            .Setup(r => r.GetValidRequestByUserIdAsync(user.Id))
+            .ReturnsAsync(approvedRequest);
+        
+        // When using temporary password, GetActiveRequestByUserIdAsync is NOT called
+        // because the code returns early in the valid temp password block
+        
+        _jwtServiceMock.Setup(j => j.GenerateToken(user))
+            .Returns("valid_token");
+
+        // Act
+        var result = await _authService.LoginAsync(request);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        approvedRequest.IsUsed.Should().BeTrue();
+        user.RequiresPasswordChange.Should().BeFalse();
+        _passwordResetRequestRepositoryMock.Verify(
+            r => r.UpdateAsync(approvedRequest),
+            Times.Once);
+        _userRepositoryMock.Verify(
+            r => r.UpdateAsync(user),
+            Times.Once);
     }
 }

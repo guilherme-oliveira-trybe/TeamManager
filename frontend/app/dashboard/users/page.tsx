@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { UserCheck, UserX, MoreVertical } from 'lucide-react';
 import { LoadingSpinnerInline } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -9,9 +11,24 @@ import { StatusBadge } from '@/components/shared/StatusBadge';
 import { User, UserStatus } from '@/types/user';
 
 export default function UsersPage() {
-  const { data: users = [], isLoading } = useUsers();
+  const [selectedStatus, setSelectedStatus] = useState<number | undefined>(undefined);
+  // Fetch ALL users (ignore status param in query key/fn for now if possible, or just pass undefined)
+  const { data: allUsers = [], isLoading } = useUsers(); 
   const activateMutation = useActivateUser();
   const deactivateMutation = useDeactivateUser();
+
+  // Calculate counts safely
+  const counts = {
+    all: allUsers.length,
+    awaiting: allUsers.filter((u: any) => u.status === UserStatus.AwaitingActivation).length,
+    active: allUsers.filter((u: any) => u.status === UserStatus.Active).length,
+    inactive: allUsers.filter((u: any) => u.status === UserStatus.Inactive).length,
+  };
+
+  // Filter users based on selection
+  const filteredUsers = selectedStatus === undefined
+    ? allUsers
+    : allUsers.filter((u: any) => u.status === selectedStatus);
 
   const handleActivate = (userId: string) => {
     activateMutation.mutate(userId);
@@ -55,22 +72,51 @@ export default function UsersPage() {
     3: 'Jogador',
   };
 
+  const statusTabs = [
+    { label: 'Todos', value: undefined, count: counts.all },
+    { label: 'Aguardando', value: UserStatus.AwaitingActivation, count: counts.awaiting },
+    { label: 'Ativos', value: UserStatus.Active, count: counts.active },
+    { label: 'Inativos', value: UserStatus.Inactive, count: counts.inactive },
+  ];
+
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Usuários</h1>
-          <p className="text-zinc-400">Gerencie os usuários do sistema</p>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-white mb-2">Usuários</h1>
+        <p className="text-zinc-400">Gerencie os usuários do sistema</p>
+      </div>
+
+       {/* Status Tabs */}
+       <div className="flex gap-2 mb-6 border-b border-zinc-800">
+        {statusTabs.map((tab) => (
+          <button
+            key={tab.label}
+            onClick={() => setSelectedStatus(tab.value)}
+            className={`px-4 py-2 font-medium border-b-2 transition-colors flex items-center gap-2 ${
+              selectedStatus === tab.value
+                ? 'border-amber-500 text-white'
+                : 'border-transparent text-zinc-400 hover:text-white'
+            }`}
+          >
+            {tab.label}
+            <span className={`text-xs px-2 py-0.5 rounded-full ${
+              selectedStatus === tab.value 
+                ? 'bg-amber-500/10 text-amber-500' 
+                : 'bg-zinc-800 text-zinc-400'
+            }`}>
+              {tab.count}
+            </span>
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
         <LoadingSpinnerInline />
-      ) : users.length === 0 ? (
+      ) : filteredUsers.length === 0 ? (
         <EmptyState
           icon={UserCheck}
           title="Nenhum usuário encontrado"
-          description="Não há usuários cadastrados no momento."
+          description="Não há usuários com este status no momento."
         />
       ) : (
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
@@ -95,7 +141,7 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800">
-              {users.map((user) => (
+              {filteredUsers.map((user: any) => (
                 <tr key={user.id} className="hover:bg-zinc-800/30">
                   <td className="px-6 py-4 text-sm text-white">
                     <div className="flex flex-col">

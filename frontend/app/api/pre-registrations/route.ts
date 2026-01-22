@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5268';
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     
     const response = await axios.get(
       `${backendUrl}/api/pre-registrations`,
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5268';
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     
     const response = await axios.post(
       `${backendUrl}/api/pre-registrations`,

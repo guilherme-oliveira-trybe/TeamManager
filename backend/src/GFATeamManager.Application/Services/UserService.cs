@@ -92,6 +92,14 @@ public class UserService : IUserService
         return BaseResponse<UserResponse>.Success(MapToResponse(user));
     }
     
+    public async Task<BaseResponse<List<UserResponse>>> GetAllAsync()
+    {
+        var users = await _userRepository.GetAllAsync();
+        var response = users.Select(MapToResponse).ToList();
+        
+        return BaseResponse<List<UserResponse>>.Success(response);
+    }
+    
     public async Task<BaseResponse<List<UserResponse>>> GetByStatusAsync(UserStatus status)
     {
         var users = await _userRepository.GetByStatusAsync(status);

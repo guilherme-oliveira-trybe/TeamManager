@@ -5,7 +5,7 @@ export interface PreRegistration {
   unit?: number;
   position?: number;
   activationCode: string;
-  expiresAt: string;
+  expirationDate: string;
   isUsed: boolean;
   createdAt: string;
 }

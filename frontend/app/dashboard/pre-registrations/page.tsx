@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { UserPlus, Copy, RefreshCw } from 'lucide-react';
-import { useAdminOnly } from '@/hooks/useAdminOnly';
+import { LoadingSpinnerInline } from '@/components/shared/LoadingSpinner';
 import { usePreRegistrations, useRegenerateActivationCode } from '@/hooks/api/usePreRegistrations';
 import { CreatePreRegModal } from '@/components/dashboard/CreatePreRegModal';
 import { PreRegSuccessModal } from '@/components/dashboard/PreRegSuccessModal';
@@ -12,7 +12,6 @@ import { ActionMenu, ActionMenuItem } from '@/components/shared/ActionMenu';
 import type { PreRegistration } from '@/types/pre-registration';
 
 export default function PreRegistrationsPage() {
-  const { isAdmin, isLoading: authLoading } = useAdminOnly();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [successModalData, setSuccessModalData] = useState<PreRegistration | null>(null);
   const [regenerateConfirm, setRegenerateConfirm] = useState<{
@@ -23,14 +22,6 @@ export default function PreRegistrationsPage() {
 
   const { data: preRegs = [], isLoading } = usePreRegistrations();
   const regenerateMutation = useRegenerateActivationCode();
-
-  if (authLoading || !isAdmin) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-zinc-400">Carregando...</div>
-      </div>
-    );
-  }
 
   const handleCreateSuccess = (data: PreRegistration) => {
     setSuccessModalData(data);
@@ -83,12 +74,8 @@ export default function PreRegistrationsPage() {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   };
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('pt-BR');
-  };
-
-  const getDaysRemaining = (expiresAt: string) => {
-    const expires = new Date(expiresAt);
+  const getDaysRemaining = (expirationDate: string) => {
+    const expires = new Date(expirationDate);
     const now = new Date();
     const diffTime = expires.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -117,7 +104,7 @@ export default function PreRegistrationsPage() {
       </div>
 
       {isLoading ? (
-        <div className="text-center text-zinc-400 py-12">Carregando...</div>
+        <LoadingSpinnerInline />
       ) : preRegs.length === 0 ? (
         <EmptyState
           icon={UserPlus}
@@ -155,7 +142,7 @@ export default function PreRegistrationsPage() {
             </thead>
             <tbody className="divide-y divide-zinc-800">
               {preRegs.map((preReg) => {
-                const daysRemaining = getDaysRemaining(preReg.expiresAt);
+                const daysRemaining = getDaysRemaining(preReg.expirationDate);
                 const isExpired = daysRemaining < 0;
                 const isExpiringSoon = daysRemaining <= 2 && daysRemaining >= 0;
 

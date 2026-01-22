@@ -1,16 +1,13 @@
 'use client';
 
 import { useAuth } from '@/hooks/api/useAuth';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
 export default function DashboardPage() {
   const { user, isAdmin, isAthlete, isLoading } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-zinc-400">Carregando...</div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (isAdmin) {

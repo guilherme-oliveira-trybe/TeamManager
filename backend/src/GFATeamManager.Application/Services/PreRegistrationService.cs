@@ -60,6 +60,14 @@ public class PreRegistrationService : IPreRegistrationService
         return BaseResponse<List<PreRegistrationResponse>>.Success(response);
     }
     
+    public async Task<BaseResponse<List<PreRegistrationResponse>>> GetAllAsync()
+    {
+        var preRegistrations = await _preRegistrationRepository.GetAllAsync();
+        var response = preRegistrations.Select(MapToResponse).ToList();
+        
+        return BaseResponse<List<PreRegistrationResponse>>.Success(response);
+    }
+    
     public async Task<OperationResponse> RegenerateCodeAsync(Guid id)
     {
         var preRegistration = await _preRegistrationRepository.GetByIdAsync(id);

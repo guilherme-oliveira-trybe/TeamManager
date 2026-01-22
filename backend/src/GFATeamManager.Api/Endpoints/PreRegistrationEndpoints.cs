@@ -12,6 +12,15 @@ public static class PreRegistrationEndpoints
         var group = app.MapGroup("/api/pre-registrations")
             .WithTags("Pre-Registrations");
 
+        group.MapGet("/", async (IPreRegistrationService service) =>
+        {
+            var result = await service.GetAllAsync();
+            return Results.Ok(result);
+        })
+        .WithName("GetAllPreRegistrations")
+        .RequireAuthorization("AdminOnly")
+        .RequireRateLimiting("admin");
+
         group.MapPost("/", async (
             CreatePreRegistrationRequest request,
             IValidator<CreatePreRegistrationRequest> validator,

@@ -16,7 +16,7 @@ export async function POST(
     }
 
     const { id } = await context.params;
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5268';
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     
     const response = await axios.post(
       `${backendUrl}/api/pre-registrations/${id}/regenerate`,

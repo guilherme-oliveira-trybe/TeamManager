@@ -14,6 +14,15 @@ public static class UserEndpoints
         var group = app.MapGroup("/api/users")
             .WithTags("Users");
 
+        group.MapGet("/", async (IUserService service) =>
+        {
+            var result = await service.GetAllAsync();
+            return Results.Ok(result);
+        })
+        .WithName("GetAllUsers")
+        .RequireAuthorization("AdminOnly")
+        .RequireRateLimiting("admin");
+
         group.MapPost("/complete-registration", async (
             CompleteRegistrationRequest request,
             IValidator<CompleteRegistrationRequest> validator,

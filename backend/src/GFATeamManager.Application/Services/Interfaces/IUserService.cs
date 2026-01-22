@@ -9,6 +9,7 @@ public interface IUserService
     Task<BaseResponse<UserResponse>> CompleteRegistrationAsync(CompleteRegistrationRequest request);
     Task<BaseResponse<UserResponse>> GetByIdAsync(Guid id);
     Task<BaseResponse<UserResponse>> GetByCpfAsync(string cpf);
+    Task<BaseResponse<List<UserResponse>>> GetAllAsync();
     Task<BaseResponse<List<UserResponse>>> GetByStatusAsync(UserStatus status);
     Task<BaseResponse<UserResponse>> UpdateAsync(Guid id, UpdateUserRequest request);
     Task<BaseResponse<UserResponse>> UpdatePositionAsync(Guid id, UpdateUserPositionRequest request);

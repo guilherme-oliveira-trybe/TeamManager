@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest) {
   try {
     const authToken = request.cookies.get('auth_token')?.value;
 
@@ -15,12 +12,10 @@ export async function POST(
       );
     }
 
-    const { id } = await context.params;
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     
-    const response = await axios.post(
-      `${backendUrl}/api/auth/password-reset-requests/${id}/approve`,
-      {},
+    const response = await axios.get(
+      `${backendUrl}/api/users`,
       {
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -32,7 +27,7 @@ export async function POST(
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return NextResponse.json(
-        { errors: error.response?.data?.errors || ['Erro ao aprovar solicitação'] },
+        { errors: error.response?.data?.errors || ['Erro ao buscar usuários'] },
         { status: error.response?.status || 500 }
       );
     }

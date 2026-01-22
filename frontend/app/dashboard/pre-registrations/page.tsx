@@ -116,11 +116,11 @@ export default function PreRegistrationsPage() {
           }}
         />
       ) : (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-lg"> {/* Removed overflow-hidden */}
           <table className="w-full">
             <thead className="bg-zinc-800/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase rounded-tl-lg"> {/* Added radius */}
                   CPF
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
@@ -135,7 +135,7 @@ export default function PreRegistrationsPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
                   Expira em
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase">
+                <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase rounded-tr-lg"> {/* Added radius */}
                   Ações
                 </th>
               </tr>

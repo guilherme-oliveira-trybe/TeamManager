@@ -20,6 +20,7 @@ export enum UserStatus {
 export interface User {
   id: string;
   name: string;
+  fullName: string; // Added to match backend
   cpf: string;
   email: string;
   phone?: string;

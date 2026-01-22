@@ -119,11 +119,11 @@ export default function UsersPage() {
           description="Não há usuários com este status no momento."
         />
       ) : (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-lg"> {/* Removed overflow-hidden for dropdown visibility */}
           <table className="w-full">
             <thead className="bg-zinc-800/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase rounded-tl-lg"> {/* Added radius */}
                   Nome
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
@@ -135,7 +135,7 @@ export default function UsersPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase">
+                <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase rounded-tr-lg"> {/* Added radius */}
                   Ações
                 </th>
               </tr>
@@ -145,7 +145,7 @@ export default function UsersPage() {
                 <tr key={user.id} className="hover:bg-zinc-800/30">
                   <td className="px-6 py-4 text-sm text-white">
                     <div className="flex flex-col">
-                      <span className="font-medium">{user.name}</span>
+                      <span className="font-medium">{user.fullName || user.name}</span>
                       <span className="text-xs text-zinc-500">{user.email}</span>
                     </div>
                   </td>

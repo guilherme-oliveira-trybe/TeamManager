@@ -1,17 +1,22 @@
 'use client';
 
 import { Home, Users, UserPlus, Key, Activity, Settings } from 'lucide-react';
-import { useAuth } from '@/hooks/api/useAuth';
 import { SidebarItem, SidebarSection } from './SidebarItem';
+import type { CurrentUser } from '@/types/user';
 
-export function Sidebar() {
-  const { isAdmin } = useAuth();
+interface SidebarProps {
+  user: CurrentUser;
+}
+
+export function Sidebar({ user }: SidebarProps) {
+  const isAdmin = user.role === 'Admin';
 
   return (
     <aside className="w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col">
       {/* Logo/Brand */}
       <div className="p-6 border-b border-zinc-800">
         <h1 className="text-xl font-bold text-white">GFA Team Manager</h1>
+        <p className="text-xs text-zinc-400 mt-1">{user.email}</p>
       </div>
 
       {/* Navigation */}

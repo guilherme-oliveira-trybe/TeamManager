@@ -84,3 +84,27 @@ export function useChangePassword() {
     },
   });
 }
+
+export function useCurrentUser() {
+  return useQuery({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const response = await axios.get('/api/auth/me');
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: false,
+  });
+}
+
+export function useAuth() {
+  const { data: user, isLoading } = useCurrentUser();
+  
+  return {
+    user,
+    isLoading,
+    isAdmin: user?.role === 'Admin',
+    isAthlete: user?.role === 'Athlete',
+    isAuthenticated: !!user,
+  };
+}

@@ -96,5 +96,26 @@ public static class AuthEndpoints
             .RequireAuthorization("AdminOnly")
             .RequireRateLimiting("admin");
         
+        group.MapGet("/me", async (
+                ClaimsPrincipal user,
+                IUserService service) =>
+            {
+                var userId = user.GetUserId();
+                var result = await service.GetByIdAsync(userId);
+                
+                return result.IsSuccess 
+                    ? Results.Ok(new {
+                        id = userId,
+                        email = user.GetUserEmail(),
+                        role = user.GetUserRole(),
+                        profile = user.GetUserProfile(),
+                        unit = user.GetUserUnit(),
+                        position = user.GetUserPosition()
+                    })
+                    : Results.NotFound();
+            })
+            .WithName("GetCurrentUser")
+            .RequireAuthorization()
+            .RequireRateLimiting("authenticated");
     }
 }

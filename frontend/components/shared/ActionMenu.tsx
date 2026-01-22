@@ -5,8 +5,8 @@ import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 export interface ActionMenuItem {
-  label: string;
-  onClick: () => void;
+  label?: string;
+  onClick?: () => void;
   icon?: React.ReactNode;
   variant?: 'default' | 'success' | 'warning' | 'danger';
   type?: 'item' | 'divider';
@@ -69,7 +69,7 @@ export function ActionMenu({ items }: ActionMenuProps) {
                 <button
                   key={index}
                   onClick={() => {
-                    item.onClick();
+                    item.onClick?.();
                     setIsOpen(false);
                   }}
                   className={cn(

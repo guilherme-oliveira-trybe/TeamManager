@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { status: string } }
+  context: { params: Promise<{ status: string }> }
 ) {
   try {
     const authToken = request.cookies.get('auth_token')?.value;
@@ -15,10 +15,11 @@ export async function GET(
       );
     }
 
+    const { status } = await context.params;
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5268';
     
     const response = await axios.get(
-      `${backendUrl}/api/users/status/${params.status}`,
+      `${backendUrl}/api/users/status/${status}`,
       {
         headers: {
           Authorization: `Bearer ${authToken}`,

@@ -19,7 +19,7 @@ export async function POST(
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5268';
     
     const response = await axios.post(
-      `${backendUrl}/api/users/${id}/activate`,
+      `${backendUrl}/api/pre-registrations/${id}/regenerate`,
       {},
       {
         headers: {
@@ -32,7 +32,7 @@ export async function POST(
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return NextResponse.json(
-        { errors: error.response?.data?.errors || ['Erro ao ativar usuário'] },
+        { errors: error.response?.data?.errors || ['Erro ao regenerar código'] },
         { status: error.response?.status || 500 }
       );
     }

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const authToken = request.cookies.get('auth_token')?.value;
@@ -15,10 +15,11 @@ export async function POST(
       );
     }
 
+    const { id } = await context.params;
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5268';
     
     const response = await axios.post(
-      `${backendUrl}/api/users/${params.id}/deactivate`,
+      `${backendUrl}/api/users/${id}/deactivate`,
       {},
       {
         headers: {

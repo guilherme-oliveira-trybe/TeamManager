@@ -1,9 +1,11 @@
 using System.Security.Claims;
 using FluentValidation;
 using GFATeamManager.Api.Extensions;
+using System.Text.Json;
 using GFATeamManager.Application.DTOS.User;
 using GFATeamManager.Application.Services.Interfaces;
 using GFATeamManager.Domain.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace GFATeamManager.Api.Endpoints;
 
@@ -14,10 +16,30 @@ public static class UserEndpoints
         var group = app.MapGroup("/api/users")
             .WithTags("Users");
 
-        group.MapGet("/", async (IUserService service) =>
+        group.MapGet("/", async (
+            [AsParameters] UserParameters parameters,
+            IUserService service,
+            HttpContext httpContext) =>
         {
-            var result = await service.GetAllAsync();
-            return Results.Ok(result);
+            var result = await service.GetAllPagedAsync(parameters);
+            
+            if (result.IsSuccess && result.Data != null)
+            {
+                var paginationMetadata = new
+                {
+                    result.Data.TotalCount,
+                    result.Data.PageSize,
+                    result.Data.CurrentPage,
+                    result.Data.TotalPages,
+                    result.Data.HasNext,
+                    result.Data.HasPrevious
+                };
+
+                httpContext.Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+                return Results.Ok(result);
+            }
+
+            return Results.BadRequest(result);
         })
         .WithName("GetAllUsers")
         .RequireAuthorization("AdminOnly")

@@ -1,3 +1,4 @@
+using GFATeamManager.Domain.Common.Models;
 using GFATeamManager.Domain.Entities;
 using GFATeamManager.Domain.Enums;
 using GFATeamManager.Domain.Interfaces.Repositories;
@@ -60,5 +61,36 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             .Include(u => u.EmergencyContact)
             .Include(u => u.PreRegistration)
             .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<PagedList<User>> GetAllPagedAsync(int pageNumber, int pageSize, string? searchTerm, UserStatus? status)
+    {
+        var query = _dbSet.AsQueryable();
+
+        if (status.HasValue)
+        {
+            query = query.Where(u => u.Status == status.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var term = searchTerm.ToLower();
+            query = query.Where(u => 
+                (u.FullName.Contains(term, StringComparison.CurrentCultureIgnoreCase)) ||
+                u.Email.Contains(term, StringComparison.CurrentCultureIgnoreCase) ||
+                u.Cpf.Contains(term));
+        }
+
+        query = query
+            .Include(u => u.EmergencyContact)
+            .OrderBy(u => u.FullName);
+
+        var count = await query.CountAsync();
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedList<User>(items, count, pageNumber, pageSize);
     }
 }

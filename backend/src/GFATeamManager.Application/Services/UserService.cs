@@ -1,5 +1,6 @@
 using GFATeamManager.Application.DTOS.Common;
 using GFATeamManager.Application.DTOS.User;
+using GFATeamManager.Domain.Common.Models;
 using GFATeamManager.Application.Services.Interfaces;
 using GFATeamManager.Domain.Entities;
 using GFATeamManager.Domain.Enums;
@@ -98,6 +99,26 @@ public class UserService : IUserService
         var response = users.Select(MapToResponse).ToList();
         
         return BaseResponse<List<UserResponse>>.Success(response);
+    }
+
+    public async Task<BaseResponse<PagedList<UserResponse>>> GetAllPagedAsync(UserParameters parameters)
+    {
+        var pagedUsers = await _userRepository.GetAllPagedAsync(
+            parameters.PageNumber, 
+            parameters.PageSize, 
+            parameters.SearchTerm, 
+            parameters.Status.HasValue ? (UserStatus)parameters.Status.Value : null
+        );
+        
+        var responseItems = pagedUsers.Select(MapToResponse).ToList();
+        
+        var pagedResponse = new PagedList<UserResponse>(
+            responseItems, 
+            pagedUsers.TotalCount, 
+            pagedUsers.CurrentPage, 
+            pagedUsers.PageSize);
+            
+        return BaseResponse<PagedList<UserResponse>>.Success(pagedResponse);
     }
     
     public async Task<BaseResponse<List<UserResponse>>> GetByStatusAsync(UserStatus status)

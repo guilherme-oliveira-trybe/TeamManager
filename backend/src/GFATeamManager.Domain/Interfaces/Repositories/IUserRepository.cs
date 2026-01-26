@@ -1,3 +1,4 @@
+using GFATeamManager.Domain.Common.Models;
 using GFATeamManager.Domain.Entities;
 using GFATeamManager.Domain.Enums;
 
@@ -11,4 +12,5 @@ public interface IUserRepository : IBaseRepository<User>
     Task<IEnumerable<User>> GetByProfileAsync(ProfileType profile);
     Task<bool> CpfExistsAsync(string cpf);
     Task<bool> EmailExistsAsync(string email);
+    Task<PagedList<User>> GetAllPagedAsync(int pageNumber, int pageSize, string? searchTerm, UserStatus? status);
 }

@@ -13,6 +13,7 @@ public static class CorsExtensions
                 policy.WithOrigins(origins)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
+                    .WithExposedHeaders("X-Pagination")
                     .AllowCredentials();
             });
         });

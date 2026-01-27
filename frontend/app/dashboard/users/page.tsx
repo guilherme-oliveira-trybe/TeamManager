@@ -1,34 +1,43 @@
 'use client';
 
 import { useState } from 'react';
-
-import { UserCheck, UserX, MoreVertical } from 'lucide-react';
+import { UserCheck, UserX } from 'lucide-react';
 import { LoadingSpinnerInline } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { useUsers, useActivateUser, useDeactivateUser } from '@/hooks/api/useUsers';
 import { ActionMenu, ActionMenuItem } from '@/components/shared/ActionMenu';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { User, UserStatus } from '@/types/user';
+import { Pagination } from '@/components/shared/Pagination';
+import { SearchInput } from '@/components/shared/SearchInput';
 
 export default function UsersPage() {
+  const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<number | undefined>(undefined);
-  // Fetch ALL users (ignore status param in query key/fn for now if possible, or just pass undefined)
-  const { data: allUsers = [], isLoading } = useUsers(); 
+  
+  const { data, isLoading, isPlaceholderData } = useUsers({
+    page,
+    pageSize: 10,
+    searchTerm,
+    status: selectedStatus
+  });
+
+  const users = data?.data || [];
+  const pagination = data?.pagination;
+
   const activateMutation = useActivateUser();
   const deactivateMutation = useDeactivateUser();
 
-  // Calculate counts safely
-  const counts = {
-    all: allUsers.length,
-    awaiting: allUsers.filter((u: any) => u.status === UserStatus.AwaitingActivation).length,
-    active: allUsers.filter((u: any) => u.status === UserStatus.Active).length,
-    inactive: allUsers.filter((u: any) => u.status === UserStatus.Inactive).length,
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setPage(1); // Reset to first page on search
   };
 
-  // Filter users based on selection
-  const filteredUsers = selectedStatus === undefined
-    ? allUsers
-    : allUsers.filter((u: any) => u.status === selectedStatus);
+  const handleStatusChange = (status: number | undefined) => {
+    setSelectedStatus(status);
+    setPage(1); // Reset to first page on filter change
+  };
 
   const handleActivate = (userId: string) => {
     activateMutation.mutate(userId);
@@ -73,10 +82,10 @@ export default function UsersPage() {
   };
 
   const statusTabs = [
-    { label: 'Todos', value: undefined, count: counts.all },
-    { label: 'Aguardando', value: UserStatus.AwaitingActivation, count: counts.awaiting },
-    { label: 'Ativos', value: UserStatus.Active, count: counts.active },
-    { label: 'Inativos', value: UserStatus.Inactive, count: counts.inactive },
+    { label: 'Todos', value: undefined },
+    { label: 'Aguardando', value: UserStatus.AwaitingActivation },
+    { label: 'Ativos', value: UserStatus.Active },
+    { label: 'Inativos', value: UserStatus.Inactive },
   ];
 
   return (
@@ -86,85 +95,99 @@ export default function UsersPage() {
         <p className="text-zinc-400">Gerencie os usuários do sistema</p>
       </div>
 
-       {/* Status Tabs */}
-       <div className="flex gap-2 mb-6 border-b border-zinc-800">
-        {statusTabs.map((tab) => (
-          <button
-            key={tab.label}
-            onClick={() => setSelectedStatus(tab.value)}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors flex items-center gap-2 ${
-              selectedStatus === tab.value
-                ? 'border-amber-500 text-white'
-                : 'border-transparent text-zinc-400 hover:text-white'
-            }`}
-          >
-            {tab.label}
-            <span className={`text-xs px-2 py-0.5 rounded-full ${
-              selectedStatus === tab.value 
-                ? 'bg-amber-500/10 text-amber-500' 
-                : 'bg-zinc-800 text-zinc-400'
-            }`}>
-              {tab.count}
-            </span>
-          </button>
-        ))}
+       {/* Status Tabs and Search */}
+       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex gap-2 border-b border-zinc-800 w-full md:w-auto overflow-x-auto">
+          {statusTabs.map((tab) => (
+            <button
+              key={tab.label}
+              onClick={() => handleStatusChange(tab.value)}
+              className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap ${
+                selectedStatus === tab.value
+                  ? 'border-amber-500 text-white'
+                  : 'border-transparent text-zinc-400 hover:text-white'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        
+        <div className="w-full md:w-64">
+           <SearchInput onSearch={handleSearch} placeholder="Buscar por nome, email ou CPF" />
+        </div>
       </div>
 
       {isLoading ? (
         <LoadingSpinnerInline />
-      ) : filteredUsers.length === 0 ? (
+      ) : users.length === 0 ? (
         <EmptyState
           icon={UserCheck}
           title="Nenhum usuário encontrado"
-          description="Não há usuários com este status no momento."
+          description={searchTerm ? "Nenhum resultado para sua busca." : "Não há usuários com este status no momento."}
         />
       ) : (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg"> {/* Removed overflow-hidden for dropdown visibility */}
-          <table className="w-full">
-            <thead className="bg-zinc-800/50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase rounded-tl-lg"> {/* Added radius */}
-                  Nome
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
-                  CPF
-                </th>
-                 <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
-                  Perfil
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase rounded-tr-lg"> {/* Added radius */}
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-800">
-              {filteredUsers.map((user: any) => (
-                <tr key={user.id} className="hover:bg-zinc-800/30">
-                  <td className="px-6 py-4 text-sm text-white">
-                    <div className="flex flex-col">
-                      <span className="font-medium">{user.fullName || user.name}</span>
-                      <span className="text-xs text-zinc-500">{user.email}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-zinc-400">
-                    {formatCPF(user.cpf)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-zinc-400">
-                    {profileLabels[user.profile] || 'Desconhecido'}
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <StatusBadge status={user.status} />
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <ActionMenu items={getActionItems(user)} />
-                  </td>
+        <div className={`bg-zinc-900 border border-zinc-800 rounded-lg flex flex-col ${isPlaceholderData ? 'opacity-70' : ''}`}> 
+          {/* Removed overflow-hidden for dropdown visibility */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-zinc-800/50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase rounded-tl-lg">
+                    Nome
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
+                    CPF
+                  </th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
+                    Perfil
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase rounded-tr-lg">
+                    Ações
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-800">
+                {users.map((user: User) => (
+                  <tr key={user.id} className="hover:bg-zinc-800/30">
+                    <td className="px-6 py-4 text-sm text-white">
+                      <div className="flex flex-col">
+                        <span className="font-medium">{user.fullName || user.name}</span>
+                        <span className="text-xs text-zinc-500">{user.email}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-zinc-400">
+                      {formatCPF(user.cpf)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-zinc-400">
+                      {profileLabels[user.profile] || 'Desconhecido'}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <StatusBadge status={user.status} />
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <ActionMenu items={getActionItems(user)} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          {/* Pagination Controls */}
+          {pagination && (
+             <Pagination 
+               currentPage={pagination.CurrentPage}
+               totalPages={pagination.TotalPages}
+               onPageChange={setPage}
+               hasNext={pagination.HasNext}
+               hasPrevious={pagination.HasPrevious}
+               totalCount={pagination.TotalCount}
+             />
+          )}
         </div>
       )}
     </div>

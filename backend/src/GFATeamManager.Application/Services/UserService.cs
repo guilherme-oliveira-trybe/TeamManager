@@ -104,8 +104,8 @@ public class UserService : IUserService
     public async Task<BaseResponse<PagedList<UserResponse>>> GetAllPagedAsync(UserParameters parameters)
     {
         var pagedUsers = await _userRepository.GetAllPagedAsync(
-            parameters.PageNumber, 
-            parameters.PageSize, 
+            parameters.GetActualPageNumber(), 
+            parameters.GetActualPageSize(), 
             parameters.SearchTerm, 
             parameters.Status.HasValue ? (UserStatus)parameters.Status.Value : null
         );

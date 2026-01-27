@@ -2,18 +2,48 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useToast } from '../useToast';
 import type { User, UserListResponse } from '@/types/user';
+import type { PaginationMetadata, PaginatedResult } from '@/types/pagination';
 
-export function useUsers(status?: number) {
+interface UserQueryParams {
+  page?: number;
+  pageSize?: number;
+  searchTerm?: string;
+  status?: number;
+}
+
+export function useUsers(params?: UserQueryParams) {
   return useQuery({
-    queryKey: ['users', status],
-    queryFn: async () => {
-      const url = status 
-        ? `/api/users/status/${status}`
-        : '/api/users';
-      const response = await axios.get<UserListResponse>(url);
-      return response.data.data || [];
+    queryKey: ['users', params],
+    queryFn: async (): Promise<PaginatedResult<User>> => {
+      const { page = 1, pageSize = 10, searchTerm = '', status } = params || {};
+      
+      const queryParams = new URLSearchParams();
+      queryParams.append('pageNumber', page.toString());
+      queryParams.append('pageSize', pageSize.toString());
+      if (searchTerm) queryParams.append('searchTerm', searchTerm);
+      if (status !== undefined) queryParams.append('status', status.toString());
+
+      const response = await axios.get<UserListResponse>(`/api/users?${queryParams.toString()}`);
+
+      const paginationHeader = response.headers['x-pagination'];
+      const pagination: PaginationMetadata = paginationHeader 
+        ? JSON.parse(paginationHeader)
+        : { 
+            TotalCount: 0, 
+            PageSize: pageSize, 
+            CurrentPage: page, 
+            TotalPages: 0, 
+            HasNext: false, 
+            HasPrevious: false 
+          };
+
+      return {
+        data: response.data.data || [],
+        pagination
+      };
     },
     staleTime: 1000 * 60 * 2, // 2 minutes
+    placeholderData: (previousData) => previousData, // Keep previous data while fetching new page
   });
 }
 

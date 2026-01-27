@@ -5,13 +5,14 @@ import { useAuth } from '@/hooks/api/useAuth';
 import { useUsers } from '@/hooks/api/useUsers';
 import { usePreRegistrations } from '@/hooks/api/usePreRegistrations';
 import { usePendingResets } from '@/hooks/api/usePasswordResets';
-import { UserStatus } from '@/types/user';
+import { UserStatus, User } from '@/types/user';
 
 export default function DashboardPage() {
   const { user, isAdmin, isAthlete, isLoading: authLoading } = useAuth();
   
   // Fetch data for admin stats
-  const { data: users = [] } = useUsers();
+  const { data: usersResult } = useUsers();
+  const users: User[] = usersResult?.data || [];
   const { data: preRegs = [] } = usePreRegistrations();
   const { data: pendingResets = [] } = usePendingResets();
 

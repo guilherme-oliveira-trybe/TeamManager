@@ -23,7 +23,13 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    return NextResponse.json(response.data);
+    const nextResponse = NextResponse.json(response.data);
+    
+    if (response.headers['x-pagination']) {
+      nextResponse.headers.set('X-Pagination', response.headers['x-pagination']);
+    }
+
+    return nextResponse;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return NextResponse.json(

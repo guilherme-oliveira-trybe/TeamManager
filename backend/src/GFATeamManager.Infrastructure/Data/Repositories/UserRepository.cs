@@ -76,8 +76,8 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         {
             var term = searchTerm.ToLower();
             query = query.Where(u => 
-                (u.FullName.Contains(term, StringComparison.CurrentCultureIgnoreCase)) ||
-                u.Email.Contains(term, StringComparison.CurrentCultureIgnoreCase) ||
+                u.FullName.ToLower().Contains(term) ||
+                u.Email.ToLower().Contains(term) ||
                 u.Cpf.Contains(term));
         }
 

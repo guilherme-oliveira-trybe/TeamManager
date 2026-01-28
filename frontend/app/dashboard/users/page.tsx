@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { UserCheck, UserX } from 'lucide-react';
 import { LoadingSpinnerInline } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -29,23 +29,23 @@ export default function UsersPage() {
   const activateMutation = useActivateUser();
   const deactivateMutation = useDeactivateUser();
 
-  const handleSearch = (term: string) => {
+  const handleSearch = useCallback((term: string) => {
     setSearchTerm(term);
-    setPage(1); // Reset to first page on search
-  };
+    setPage(1);
+  }, []);
 
-  const handleStatusChange = (status: number | undefined) => {
+  const handleStatusChange = useCallback((status: number | undefined) => {
     setSelectedStatus(status);
-    setPage(1); // Reset to first page on filter change
-  };
+    setPage(1);
+  }, []);
 
-  const handleActivate = (userId: string) => {
+  const handleActivate = useCallback((userId: string) => {
     activateMutation.mutate(userId);
-  };
+  }, [activateMutation]);
 
-  const handleDeactivate = (userId: string) => {
+  const handleDeactivate = useCallback((userId: string) => {
     deactivateMutation.mutate(userId);
-  };
+  }, [deactivateMutation]);
 
   const formatCPF = (cpf: string) => {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
@@ -54,7 +54,6 @@ export default function UsersPage() {
   const getActionItems = (user: User): ActionMenuItem[] => {
     const items: ActionMenuItem[] = [];
 
-    // Se o usuário estiver Pendente ou Aguardando Aprovação, pode ativar
     if (user.status === UserStatus.PendingRegistration || user.status === UserStatus.AwaitingActivation || user.status === UserStatus.Inactive) {
       items.push({
         label: 'Ativar Usuário',
@@ -63,7 +62,6 @@ export default function UsersPage() {
       });
     }
 
-    // Se estiver Ativo, pode desativar
     if (user.status === UserStatus.Active) {
       items.push({
         label: 'Desativar',
@@ -114,7 +112,7 @@ export default function UsersPage() {
         </div>
         
         <div className="w-full md:w-64">
-           <SearchInput onSearch={handleSearch} placeholder="Buscar por nome, email ou CPF" />
+           <SearchInput onSearch={handleSearch} placeholder="Buscar usuários..." />
         </div>
       </div>
 

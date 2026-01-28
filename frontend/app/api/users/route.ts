@@ -14,8 +14,14 @@ export async function GET(request: NextRequest) {
 
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     
+    const { searchParams } = new URL(request.url);
+    const queryString = searchParams.toString();
+    const fullUrl = queryString 
+      ? `${backendUrl}/api/users?${queryString}`
+      : `${backendUrl}/api/users`;
+    
     const response = await axios.get(
-      `${backendUrl}/api/users`,
+      fullUrl,
       {
         headers: {
           Authorization: `Bearer ${authToken}`,

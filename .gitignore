@@ -28,3 +28,6 @@ frontend/public/workbox-*.js
 # OS
 .DS_Store
 Thumbs.db
+
+# agent
+.agent/
